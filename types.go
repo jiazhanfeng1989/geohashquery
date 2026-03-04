@@ -22,7 +22,7 @@ const (
 type GeoId = string
 
 // GeoIds is a slice of GeoId.
-type GeoIds []GeoId
+type GeoIds = []GeoId
 
 // QueryDirection controls the iteration order when enumerating geohash cells
 // inside a bounding box. Choosing the direction that matches the travel

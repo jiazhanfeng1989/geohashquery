@@ -32,7 +32,7 @@ const geoHashSuffix = "bcfguvyz89destwx2367kmqr0145hjnp"
 
 // EncodeGeoHashId encodes a GPS point into a GeoId at the given precision level.
 func EncodeGeoHashId(point GPSPoint, geoHashLevel GeoHashLevelType) GeoId {
-	return GeoId(geohash.EncodeWithPrecision(point.Lat, point.Lon, uint(geoHashLevel)))
+	return geohash.EncodeWithPrecision(point.Lat, point.Lon, uint(geoHashLevel))
 }
 
 type iterationOrder struct {
@@ -128,10 +128,10 @@ func GetGeoHashIdsByBoxWithDirection(
 			if originBuffer != nil {
 				neighborBox := geohash.BoundingBox(neighborHash)
 				if checkNeighborBoxIntersection(neighborBox, originBuffer) {
-					geoIds = append(geoIds, GeoId(neighborHash))
+					geoIds = append(geoIds, neighborHash)
 				}
 			} else {
-				geoIds = append(geoIds, GeoId(neighborHash))
+				geoIds = append(geoIds, neighborHash)
 			}
 		}
 	}
@@ -270,7 +270,7 @@ func GetGeoHashIdsByRadius(center GPSPoint, radius int, geoHashLevel GeoHashLeve
 }
 
 func isWithinRadius(geoId GeoId, center GPSPoint, radius int) bool {
-	box := geohash.BoundingBox(string(geoId))
+	box := geohash.BoundingBox(geoId)
 	corners := []GPSPoint{
 		{Lat: box.MinLat, Lon: box.MinLng},
 		{Lat: box.MinLat, Lon: box.MaxLng},
@@ -456,7 +456,7 @@ func GetGeoHashIdsByRoute(route GPSPoints, routeWidth int, geoHashLevel GeoHashL
 }
 
 func isWithinRouteBuffer(geoId GeoId, route GPSPoints, routeWidth int) bool {
-	box := geohash.BoundingBox(string(geoId))
+	box := geohash.BoundingBox(geoId)
 
 	geoCenter := GPSPoint{
 		Lat: (box.MinLat + box.MaxLat) / 2,
@@ -551,10 +551,9 @@ func ensureValidLat(lat float64) float64 {
 // SplitGeoHash splits a geohash into all 32 child geohashes (one level deeper).
 func SplitGeoHash(geoId GeoId) GeoIds {
 	newGeoIds := make(GeoIds, 32)
-	baseStr := string(geoId)
 
 	for i, c := range geoHashSuffix {
-		newGeoIds[i] = GeoId(baseStr + string(c))
+		newGeoIds[i] = geoId + string(c)
 	}
 
 	return newGeoIds

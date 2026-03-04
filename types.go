@@ -19,7 +19,7 @@ const (
 )
 
 // GeoId is a geohash string identifier.
-type GeoId string
+type GeoId = string
 
 // GeoIds is a slice of GeoId.
 type GeoIds []GeoId
